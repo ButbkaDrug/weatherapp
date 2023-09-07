@@ -3,6 +3,9 @@
 import http.client
 import json
 import argparse
+from os import getenv
+
+API_KEY = getenv("WEATHER_API_KEY")
 
 def main():
 
@@ -21,7 +24,7 @@ def main():
     conn = http.client.HTTPSConnection("weatherapi-com.p.rapidapi.com")
 
     headers = {
-        'X-RapidAPI-Key': "",
+        'X-RapidAPI-Key': API_KEY,
         'X-RapidAPI-Host': "weatherapi-com.p.rapidapi.com"
     }
 
