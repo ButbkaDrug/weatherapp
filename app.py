@@ -1,15 +1,48 @@
+#! /bin/python3
+
 import http.client
+import json
+import argparse
 
-conn = http.client.HTTPSConnection("weatherapi-com.p.rapidapi.com")
+def main():
 
-headers = {
-    'X-RapidAPI-Key': "2087f67ac9msh21efbd395e4dc40p1e3dd6jsn1dfac09a3a5d",
-    'X-RapidAPI-Host': "weatherapi-com.p.rapidapi.com"
-}
+    parser = argparse.ArgumentParser(
+            description="Check the weather in the given city",
+            )
+    parser.add_argument("city")
 
-conn.request("GET", "/current.json?q=53.1%2C-0.13", headers=headers)
+    args = parser.parse_args()
 
-res = conn.getresponse()
-data = res.read()
+    if not args.city:
+        city_name = input("Please, provide the name of the city: ")
+    else:
+        city_name = args.city
 
-print(data.decode("utf-8"))
+    conn = http.client.HTTPSConnection("weatherapi-com.p.rapidapi.com")
+
+    headers = {
+        'X-RapidAPI-Key': "",
+        'X-RapidAPI-Host': "weatherapi-com.p.rapidapi.com"
+    }
+
+
+    conn.request("GET", f"/search.json?q={city_name}", headers=headers)
+
+    res = conn.getresponse()
+    data = res.read()
+
+    if len(data.decode("utf-8")) < 3:
+        print(f"I'm sorry. No city called {city_name} were found!")
+        exit()
+
+
+
+    conn.request("GET", f"/current.json?q={city_name}", headers=headers)
+
+    res = conn.getresponse()
+    data = res.read()
+
+    print(json.loads(data))
+
+if __name__ == "__main__":
+    main()
