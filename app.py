@@ -51,7 +51,12 @@ def process_response( response:dict ) -> Union[str, None]:
 
 def sort_results(results:list[dict], key:str) -> None:
 
-    return results.sort( key=lambda x: x.get("current").get(key))
+    def sort_by_key(entry:Union[dict, None]) -> int:
+        if entry.get("error"):
+            return 0
+        return entry.get("current").get(key)
+
+    return results.sort( key=sort_by_key)
 
 
 
@@ -102,7 +107,7 @@ async def main():
             args.sort_by_humidity
     ]
 
-    key: str
+    key: str = None
 
     if any(sort_group):
         key = [x for x in sort_group if x].pop()
