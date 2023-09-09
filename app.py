@@ -27,7 +27,7 @@ async def query_api(query: str) -> str:
 
     return data
 
-def process_response( response:dict ) -> str:
+def process_response( response:dict ) -> Union[str, None]:
     output = ""
 
 
@@ -36,21 +36,36 @@ def process_response( response:dict ) -> str:
         print(f"ERROR {code}: {message}", file=stderr)
         return
 
-    name = response.get( "location" ).get( "name" ).capitalize()
-    text = response.get( "current" ).get( "condition" ).get( "text" ).lower()
+    current = response.get( "current" )
 
-    output = f"In { name } it is { text }"
+    name = response.get( "location" ).get( "name" ).capitalize()
+    text = current.get("condition").get( "text" ).lower()
+    temp = current.get("temp_c")
+    feels_like = current.get("feelslike_c")
+    speed = current.get("wind_kph")
+    humidity = current.get("humidity")
+
+    output = f"In { name } it is { text }. Temperature is {temp} C, feels like {feels_like}. Wind speed is {speed} km/h. Humidity is {humidity}%"
 
     return output
 
+def sort_results(results:list[dict], key:str) -> None:
+
+    return results.sort( key=lambda x: x.get("current").get(key))
 
 
-async def process_input(query:Union[ str, list[str] ]) -> list[str]:
+
+
+async def process_input(query: list[str], sort_by:str=None ) -> list[str]:
     output = []
 
 
     queries = [query_api(q) for q in query]
     responses = await asyncio.gather(*queries)
+
+    if sort_by:
+        sort_results(responses, sort_by)
+
 
     for response in responses:
         data = process_response(response)
@@ -67,16 +82,35 @@ async def main():
 
     parser = argparse.ArgumentParser(
             description="Check the weather in the given city",
-            )
+    )
+    sort_keys = parser.add_mutually_exclusive_group()
+
     parser.add_argument("city", nargs="+")
     parser.add_argument("-o", "--output", action="store")
+    sort_keys.add_argument("-t", "--sort-by-temperature", action="store_const", const="temp_c")
+    sort_keys.add_argument("-w", "--sort-by-wind-speed", action="store_const", const="wind_kph")
+    sort_keys.add_argument("-u", "--sort-by-humidity", action="store_const", const="humidity")
 
     args = parser.parse_args()
 
     city_name = args.city
 
 
-    output = await process_input(city_name)
+    sort_group = [
+            args.sort_by_temperature,
+            args.sort_by_wind_speed,
+            args.sort_by_humidity
+    ]
+
+    key: str
+
+    if any(sort_group):
+        key = [x for x in sort_group if x].pop()
+
+
+
+
+    output = await process_input(city_name, key)
 
 
     if args.output:
