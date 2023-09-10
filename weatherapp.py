@@ -46,7 +46,7 @@ def process_response( response:dict ) -> Union[str, None]:
     speed = current.get("wind_kph")
     humidity = current.get("humidity")
 
-    output = f"In { name } it is { text }. Temperature is {temp} C, feels like {feels_like}. Wind speed is {speed} km/h. Humidity is {humidity}%"
+    output = f"It is { text } in { name }. Temperature is {temp} C, feels like {feels_like}. Wind speed is {speed} km/h. Humidity is {humidity}%"
 
     return output
 
