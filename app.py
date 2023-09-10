@@ -1,12 +1,13 @@
 #! /bin/python3
 
-import http.client
 import json
-import argparse
 import asyncio
-from typing import Union
+import argparse
+import http.client
 from os import getenv
+from typing import Union
 from sys import stderr, stdout
+from urllib.parse import quote
 
 API_KEY = getenv("WEATHER_API_KEY")
 
@@ -19,7 +20,7 @@ async def query_api(query: str) -> str:
     }
 
 
-    conn.request("GET", f"/current.json?q={query}", headers=headers)
+    conn.request("GET", f"/current.json?q={quote(query)}", headers=headers)
 
     res = conn.getresponse()
 
