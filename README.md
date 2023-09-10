@@ -10,14 +10,14 @@ Usage example:
 
 ```bash
 
-$ python3 weatherapp.py London "New York" Dubai
+$ python3 weatherapp.py London "San Francisco" Dubai
 
 ```
 
 output would be like:
 ```bash
-It is sunny in London. Temperature is 17.0 C, feels like 17.0. Wind speed is 4.0 km/h. Humidity is 88%
-It is patchy rain possible in New nabumai. Temperature is 28.1 C, feels like 31.8. Wind speed is 18.7 km/h. Humidity is 76%
+It is partly cloudy in London. Temperature is 17.0 C, feels like 17.0. Wind speed is 4.0 km/h. Humidity is 88%
+It is partly cloudy in San francisco. Temperature is 15.0 C, feels like 14.5. Wind speed is 19.1 km/h. Humidity is 93%
 It is sunny in Dubai. Temperature is 34.0 C, feels like 44.5. Wind speed is 11.2 km/h. Humidity is 67%
 ```
 You can also sort output using -t to sort by temperature, -w will sort by wind speed and -u will sort by humidity. 
